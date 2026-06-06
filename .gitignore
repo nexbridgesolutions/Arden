@@ -1,0 +1,33 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Checkpoints — muy pesados para git
+checkpoints/*.pt
+checkpoints/finetune/
+
+# Datos raw — se regeneran
+data/raw/
+data/cache/
+data/balanced/
+
+# Logs
+logs/
+
+# Vocab — se regenera
+data/vocab/
+
+# Config generada
+arden_config.json
+
+# VS Code
+.vscode/
+
+# Misc
+*.log
+*.pid
+.DS_Store

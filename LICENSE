@@ -1,0 +1,113 @@
+ARDEN COMMUNITY LICENSE AGREEMENT
+Version 1.0 — June 2026
+
+Copyright 2026 Nex Bridge Solutions LLC
+Author: David Arriaga
+Contact: legal@nexbridgesolutions.com
+
+INTRODUCTORY NOTE
+-----------------
+This license is based in part on the Apache License Version 2.0, with
+modifications to address commercial use. Please read carefully — this
+license contains obligations for those commercially exploiting Arden
+or any Derivative Work.
+
+1. DEFINITIONS
+--------------
+"License" means the terms and conditions defined in this document.
+
+"Licensor" means Nex Bridge Solutions LLC, the copyright owner of Arden.
+
+"Arden" means the Arden 1.0 large language model, weights, architecture,
+tokenizer, training code, and associated documentation made available
+under this License.
+
+"Derivative Work" means any work based on or derived from Arden,
+including fine-tuned models, quantized versions, merged models, or
+any model trained using outputs from Arden.
+
+"Commercial Use" means any use where there is, or there is a reasonable
+expectation of, revenue directly or indirectly attributable to the use
+of Arden or any Derivative Work, including but not limited to:
+  (a) Offering Arden or a Derivative Work as a hosted API or service;
+  (b) Embedding Arden in a commercial product or SaaS platform;
+  (c) Fine-tuning and reselling Arden or Derivative Works;
+  (d) Using Arden to generate content sold commercially.
+
+"Non-Commercial Use" means personal use, academic research, education,
+and internal evaluation with no revenue expectation.
+
+"Hosting Use" means making Arden or any Derivative Work available to
+third parties as a managed inference or fine-tuning service.
+
+2. GRANT OF RIGHTS — NON-COMMERCIAL
+-------------------------------------
+Subject to the terms of this License, Licensor grants You a worldwide,
+non-exclusive, royalty-free license to:
+  (a) Use, copy, and modify Arden for Non-Commercial Use;
+  (b) Distribute Arden or Derivative Works for Non-Commercial Use,
+      provided You include this License and attribute Nex Bridge
+      Solutions LLC as the original author.
+
+3. COMMERCIAL USE — REQUIRES AGREEMENT
+----------------------------------------
+Commercial Use of Arden or any Derivative Work is NOT permitted under
+this License without a separate written commercial license agreement
+with Nex Bridge Solutions LLC.
+
+To obtain a commercial license, contact:
+  legal@nexbridgesolutions.com
+  www.nexbridgesolutions.com
+
+4. HOSTING USE — REQUIRES AGREEMENT
+--------------------------------------
+Hosting Use of Arden or any Derivative Work requires express written
+permission from Nex Bridge Solutions LLC and is subject to a separate
+Hosting License agreement.
+
+5. CONDITIONS FOR ALL USE
+--------------------------
+(a) You must retain this License file in all copies or distributions.
+(b) You must include the following attribution in any public release,
+    product page, documentation, or interface:
+    "Powered by Arden — developed by Nex Bridge Solutions LLC"
+(c) You may not use the name "Arden", "NexBridge", or "Nex Bridge
+    Solutions" to endorse or promote products without prior written
+    consent from Nex Bridge Solutions LLC.
+(d) You may not use Arden or its outputs to train a competing
+    general-purpose language model without a commercial agreement.
+
+6. REDISTRIBUTION
+------------------
+You may redistribute Arden or Derivative Works under Non-Commercial
+terms provided that:
+  (a) This License is included unmodified;
+  (b) Attribution to Nex Bridge Solutions LLC is clearly stated;
+  (c) You do not imply endorsement by Nex Bridge Solutions LLC.
+
+7. DISCLAIMER OF WARRANTY
+---------------------------
+Arden is provided "AS IS" without warranty of any kind, express or
+implied. Nex Bridge Solutions LLC makes no warranties regarding
+fitness for a particular purpose or non-infringement.
+
+8. LIMITATION OF LIABILITY
+----------------------------
+In no event shall Nex Bridge Solutions LLC or David Arriaga be liable
+for any damages arising from the use or inability to use Arden,
+including indirect, incidental, or consequential damages.
+
+9. TERMINATION
+---------------
+This License terminates automatically if You breach any of its terms.
+Upon termination, You must cease all use and destroy all copies of
+Arden in Your possession.
+
+10. GOVERNING LAW
+------------------
+This License shall be governed by the laws of the State of Arizona,
+United States of America, without regard to conflict of law provisions.
+
+---
+"Arden" is a trademark of Nex Bridge Solutions LLC.
+All rights not expressly granted herein are reserved.
