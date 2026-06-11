@@ -14,7 +14,6 @@ Target hardware profile:
 """
 
 from __future__ import annotations
-
 import json
 from dataclasses import dataclass, field, asdict
 from pathlib import Path
@@ -26,23 +25,24 @@ BASE_DIR = Path(__file__).resolve().parent.parent  # /opt/arden
 @dataclass
 class ModelConfig:
     """
-    Transformer ~110M parameters — decoder-only, general purpose.
+    Transformer ~180M parameters — decoder-only, general purpose.
+    ARDEN 0.2 — optimized for GTX 1050 2GB VRAM.
 
     Parameter estimate (tie_embeddings=True):
-      Token embedding : 32_000 x 768  =  24.6 M
-      Pos  embedding  :    512 x 768  =   0.4 M
-      12 x layers     :  12 x 7.1 M  =  85.2 M
-      LM head         :  tied        =   0.0 M
+      Token embedding : 32_000 x 768   =  24.6 M
+      Pos  embedding  :    256 x 768   =   0.2 M
+      22 x layers     :  22 x 7.08 M   = 155.9 M
+      LM head         :  tied          =   0.0 M
       ─────────────────────────────────────────
-      Total approx.                  = 110.2 M
+      Total approx.                    = 180.7 M
     """
     vocab_size : int   = 32_000
-    d_model    : int   = 2_048
-    n_heads    : int   = 16
+    d_model    : int   = 768
+    n_heads    : int   = 12
     n_layers   : int   = 22
-    d_ff       : int   = 8_192
-    d_head     : int   = 128
-    max_seq_len: int   = 2_048
+    d_ff       : int   = 3_072
+    d_head     : int   = 64
+    max_seq_len: int   = 256
 
     dropout          : float = 0.10
     attention_dropout: float = 0.10
@@ -70,11 +70,11 @@ class TrainingConfig:
     Training hyperparameters.
     Optimized for CPU-only — scales automatically if CUDA is available.
     """
-    batch_size                : int   = 2
-    gradient_accumulation_steps: int  = 16      # effective batch = 512
+    batch_size                : int   = 1
+    gradient_accumulation_steps: int  = 8
     learning_rate             : float = 3e-4
     min_learning_rate         : float = 3e-5
-    warmup_steps              : int   = 2_000
+    warmup_steps              : int   = 1_000
     lr_decay_type             : str   = "cosine"
     max_steps                 : int   = 50_000
     max_epochs                : Optional[int] = None
@@ -84,17 +84,17 @@ class TrainingConfig:
     beta2                     : float = 0.999
     epsilon                   : float = 1e-8
     grad_clip                 : float = 1.0
-    eval_interval             : int   = 50
+    eval_interval             : int   = 500
     eval_steps                : int   = 25
-    checkpoint_interval       : int   = 50
+    checkpoint_interval       : int   = 500
     keep_last_n_checkpoints   : int   = 3
     use_amp                   : bool  = False
-    dtype                     : str   = "float32"
+    dtype                     : str   = "float16"
     seed                      : int   = 42
     num_threads               : int   = 4
     num_interop_threads       : int   = 2
-    num_workers               : int   = 0
-    pin_memory                : bool  = False
+    num_workers               : int   = 2
+    pin_memory                : bool  = True
     log_interval              : int   = 50
 
 
@@ -160,7 +160,7 @@ class InferenceConfig:
     api_key_required   : bool  = True
     max_concurrent_requests: int = 4
     request_timeout_sec    : int = 60
-    device             : str   = "cpu"
+    device             : str   = "cuda"
     use_quantization   : bool  = False
     model_load_path    : Optional[str] = None
     api_version        : str   = "v1"
@@ -172,7 +172,6 @@ class LoggingConfig:
     log_level     : str  = "INFO"
     log_to_file   : bool = True
     log_to_console: bool = True
-    log_interval  : int  = 50
     log_filename  : str  = "arden_training.log"
     max_log_bytes : int  = 10 * 1024 * 1024
     backup_count  : int  = 5
@@ -190,9 +189,9 @@ class ArdenConfig:
     ARDEN 1.0 — Master configuration.
     Single entry point for all modules.
     """
-    version    : str = "1.0.0"
+    version    : str = "0.9.0"
     model_name : str = "ARDEN"
-    description: str = "General Purpose Bilingual LLM ES/EN"
+    description: str = "General Purpose 0.2B-parameters"
     copyright  : str = "Copyright 2026 Nex Bridge Solutions LLC"
     license    : str = "Arden Community License v1.0"
     author     : str = "David Arriaga"
@@ -235,7 +234,7 @@ class ArdenConfig:
             )
         )
 
-        print(f"  Params est.: ~{total/1e6:.1f} M  (~1.1B target)")
+        print(f"  Params est.: ~{total/1e6:.1f} M")
         print("=" * 60)
 
     def validate(self) -> None:

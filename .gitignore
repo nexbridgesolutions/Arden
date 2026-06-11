@@ -31,3 +31,6 @@ arden_config.json
 *.log
 *.pid
 .DS_Store
+
+# Corpus tokenizado — 23GB, nunca subir
+data/processed/

@@ -1,0 +1,17 @@
+[Unit]
+Description=ARDEN 1.0 — Training Service
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/arden
+ExecStart=/opt/arden/arden_train_runner.sh
+Restart=on-failure
+RestartSec=30
+StandardOutput=append:/opt/arden/logs/arden_training.log
+StandardError=append:/opt/arden/logs/arden_training.log
+
+[Install]
+WantedBy=multi-user.target
