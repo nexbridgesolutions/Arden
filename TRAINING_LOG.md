@@ -101,4 +101,23 @@ the first 256 tokens of each chunk (~8x more effective data).
 
 _(to be updated)_
 
+## Experimental methodology — rotating gradual unfreezing
+
+**Research question:** How far can a language model be pretrained
+from scratch on minimal, low-cost hardware (8GB system RAM, 2GB GPU
+VRAM)?
+
+Standard gradual unfreezing (Howard & Ruder, 2018) accumulates
+unfrozen layers when fine-tuning a *pretrained* model. This project
+explores an under-documented regime: applying gradual unfreezing
+during *from-scratch pretraining* on a 2GB-VRAM GPU, where layers
+are unfrozen in rotating windows of 3 (re-freezing upper layers to
+remain within memory limits) rather than accumulated.
+
+To our knowledge, this rotating variant — applied to from-scratch
+pretraining under a 2GB memory budget — has not been previously
+documented. Results, positive or negative, are recorded here.
+
+— David Ernesto Arriaga Pineda, Nex Bridge Solutions LLC, 2026
+
 ---
