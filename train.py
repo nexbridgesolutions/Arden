@@ -39,7 +39,7 @@ class ArdenDataset(Dataset):
         self.jsonl_path  = jsonl_path
         self.max_seq_len = max_seq_len
         self._cache      : dict = {}
-        self._cache_size : int  = 300_000
+        self._cache_size : int  = 20_000
 
         print(f"  Indexing {jsonl_path.name}...")
         self.offsets: List[int] = []
@@ -67,7 +67,12 @@ class ArdenDataset(Dataset):
                 if len(self._cache) < self._cache_size:
                     self._cache[offset] = record
 
-        ids            = record["input_ids"][:self.max_seq_len]
+        full_ids = record["input_ids"]
+        if len(full_ids) > self.max_seq_len:
+            start = random.randint(0, len(full_ids) - self.max_seq_len)
+            ids = full_ids[start:start + self.max_seq_len]
+        else:
+            ids = full_ids
         input_ids      = torch.tensor(ids, dtype=torch.long)
         labels         = input_ids.clone()
         attention_mask = torch.ones(len(ids), dtype=torch.long)
@@ -142,7 +147,7 @@ class ArdenTrainer:
         for name, param in model.named_parameters():
             param.requires_grad = False
         for name, param in model.named_parameters():
-            if any(x in name for x in ["layers.20.", "layers.21.", "norm_final", "lm_head"]):
+            if any(x in name for x in ["layers.18.", "layers.19.", "layers.20.", "layers.21.", "norm_final", "lm_head"]):
                 param.requires_grad = True
 
         trainable = sum(p.numel() for p in model.parameters() if p.requires_grad)
@@ -194,27 +199,12 @@ class ArdenTrainer:
             "loss"           : loss,
         }, path)
         print(f"  Checkpoint saved: {name}")
-        
-        # Resume automático — prefiere best_model si existe
-        best_path   = self.checkpoint_dir / "best_model.pt"
-        checkpoints = sorted(self.checkpoint_dir.glob("step_*.pt"))
-        if best_path.exists():
-            resume_path = best_path
-        elif checkpoints:
-            resume_path = checkpoints[-1]
-        else:
-            resume_path = None
 
-        if resume_path is not None:
-            print(f"\n  Resuming from {resume_path.name}...")
-            ckpt = torch.load(resume_path, map_location=self.device, weights_only=True)
-            model.load_state_dict(ckpt["model_state"])
-            if "optimizer_state" in ckpt:
-                optimizer.load_state_dict(ckpt["optimizer_state"])
-            self.step = ckpt["step"]
-            print(f"  Resumed at step {self.step}")
-        else:
-            print("\n  No checkpoint found — starting from scratch")
+        # Mantener solo los últimos N checkpoints
+        checkpoints = sorted(self.checkpoint_dir.glob("step_*.pt"))
+        while len(checkpoints) > self.cfg_ck.keep_last_n_checkpoints:
+            checkpoints[0].unlink()
+            checkpoints = checkpoints[1:]
 
     def _save_best(self, model, loss):
         torch.save({"step": self.step, "model_state": model.state_dict(), "loss": loss},
@@ -278,7 +268,11 @@ class ArdenTrainer:
             ckpt = torch.load(resume_path, map_location=self.device, weights_only=True)
             model.load_state_dict(ckpt["model_state"])
             if "optimizer_state" in ckpt:
-                optimizer.load_state_dict(ckpt["optimizer_state"])
+                try:
+                    optimizer.load_state_dict(ckpt["optimizer_state"])
+                    print("  Optimizer state restored")
+                except ValueError:
+                    print("  Optimizer state skipped (freeze config changed) — fresh optimizer")
             self.step = ckpt["step"]
             print(f"  Resumed at step {self.step}")
         else:
