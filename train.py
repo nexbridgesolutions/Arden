@@ -1,9 +1,9 @@
 """
-ARDEN 0.5B — Training Loop
+ARDEN 0.2B — Training Loop
 Copyright 2026 Nex Bridge Solutions LLC — David Ernesto Arriaga Pineda
 SPDX-License-Identifier: Arden Community License v1.0
 
-Training script for ARDEN 0.5B on GTX 1050 2GB with float16 AMP.
+Training script for ARDEN 0.2B on GTX 1050 2GB with float16 AMP.
 """
 
 from __future__ import annotations
@@ -147,7 +147,7 @@ class ArdenTrainer:
         for name, param in model.named_parameters():
             param.requires_grad = False
         for name, param in model.named_parameters():
-            if any(x in name for x in ["layers.18.", "layers.19.", "layers.20.", "layers.21.", "norm_final", "lm_head"]):
+            if any(x in name for x in ["layers.19.", "layers.20.", "layers.21.", "norm_final", "lm_head"]):
                 param.requires_grad = True
 
         trainable = sum(p.numel() for p in model.parameters() if p.requires_grad)
@@ -256,10 +256,10 @@ class ArdenTrainer:
         # Resume automático desde el checkpoint
         best_path   = self.checkpoint_dir / "best_model.pt"
         checkpoints = sorted(self.checkpoint_dir.glob("step_*.pt"))
-        if checkpoints:
-            resume_path = checkpoints[-1]
-        elif best_path.exists():
+        if best_path.exists():
             resume_path = best_path
+        elif checkpoints:
+            resume_path = checkpoints[-1]
         else:
             resume_path = None
 
@@ -289,7 +289,7 @@ class ArdenTrainer:
         last_ckpt_time = time.time()
 
         self._log(f"\n{'─'*60}")
-        self._log(f"  ARDEN 0.5B — Nex Bridge Solutions LLC")
+        self._log(f"  ARDEN 0.2B — Nex Bridge Solutions LLC")
         self._log(f"  General Purpose Bilingual LLM ES/EN/PT/FR")
         self._log(f"{'─'*60}")
         self._log(f"  Device         : {self.device}")

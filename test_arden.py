@@ -1,21 +1,20 @@
 import sys
 import torch
 sys.path.insert(0, '/opt/arden')
-from core.config_05b import get_05b_config
+from core.config import ArdenConfig
 from core.model import ArdenModel
 from core.tokenizer import ArdenTokenizer
 from pathlib import Path
-
-cfg       = get_05b_config()
+cfg       = ArdenConfig()
 vocab_dir = Path('/opt/arden/data/vocab')
-ckpt_path = Path('/opt/arden/checkpoints_05b/best_model.pt')
+ckpt_path = Path('/opt/arden/checkpoints/best_model.pt')
 
 print("Cargando tokenizer...")
 tokenizer = ArdenTokenizer.load(vocab_dir)
 
 print("Cargando modelo...")
 model = ArdenModel(cfg.model)
-ckpt  = torch.load(ckpt_path, map_location='cpu')
+ckpt  = torch.load(ckpt_path, map_location='cpu', weights_only=True)
 model.load_state_dict(ckpt['model_state'])
 model.eval()
 
@@ -26,7 +25,17 @@ def generate(prompt, max_new_tokens=50, temperature=0.8):
     with torch.no_grad():
         for _ in range(max_new_tokens):
             out    = model(input_ids=x)
-            logits = out['lm_logits'][:, -1, :] / temperature
+            logits = out['lm_logits'][:, -1, :]
+            # Repetition penalty
+            for tok in set(x[0].tolist()):
+                if logits[0, tok] > 0:
+                    logits[0, tok] /= 1.3
+                else:
+                    logits[0, tok] *= 1.3
+            logits = logits / temperature
+            k = 40
+            kth = torch.topk(logits, k)[0][:, -1:]
+            logits = logits.masked_fill(logits < kth, float('-inf'))
             probs  = torch.softmax(logits, dim=-1)
             next_id = torch.multinomial(probs, 1)
             x = torch.cat([x, next_id], dim=1)
