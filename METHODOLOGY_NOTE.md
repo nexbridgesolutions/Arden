@@ -81,3 +81,78 @@ The rotating approach is considered successful **only if** it drives
 VAL loss meaningfully below the 6.44 achieved by simply training the
 3 top contiguous layers. Otherwise, the simpler contiguous approach
 wins and that is documented as the finding.
+
+## Rotating gradual unfreezing — experiment tracking
+
+Each window trains for 50,000 steps on a 2GB-VRAM GPU. Windows of 3
+layers overlap by one "bridge" layer, which stays trainable across two
+consecutive windows to carry learned signal downward. The embedding
+layer is the final frontier and is only reached under full unfreeze
+(6GB GPU).
+
+**Pre-registered success criterion:** the rotating approach is
+considered useful only if VAL loss drops meaningfully below the
+baseline of **6.44** (achieved by simply training the 3 top contiguous
+layers, no rotation). A negative result is a valid, documented finding.
+
+### Baseline (contiguous, no rotation)
+
+| Phase | Trainable layers | Steps | VAL loss |
+|---|---|---|---|
+| Phase 1 | 20, 21 | 50,000 | 6.53 |
+| Phase 2 | 19, 20, 21 | 50,000 | **6.44** |
+
+### Rotating windows
+
+| Window | Trainable layers | Bridge | Steps (+50k each) | VAL loss | Δ vs baseline |
+|---|---|---|---|---|---|
+| A | 21, 20, 19 | — | 50,000 | 6.44 | baseline |
+| B | 19, 18, 17 | 19 | 100,000 | _pending_ | _–_ |
+| C | 17, 16, 15 | 17 | 150,000 | _pending_ | _–_ |
+| D | 15, 14, 13 | 15 | 200,000 | _pending_ | _–_ |
+| E | 13, 12, 11 | 13 | 250,000 | _pending_ | _–_ |
+| F | 11, 10, 9 | 11 | 300,000 | _pending_ | _–_ |
+| G | 9, 8, 7 | 9 | 350,000 | _pending_ | _–_ |
+| H | 7, 6, 5 | 7 | 400,000 | _pending_ | _–_ |
+| I | 5, 4, 3 | 5 | 450,000 | _pending_ | _–_ |
+| J | 3, 2, 1 | 3 | 500,000 | _pending_ | _–_ |
+| K | 1, 0 | 1 | 550,000 | _pending_ | _–_ |
+
+### Final stage (full unfreeze, 6GB GPU)
+
+| Stage | Trainable | VAL loss | Notes |
+|---|---|---|---|
+| Full unfreeze | all 22 layers + embedding | _pending_ | embedding finally trained |
+
+### How to read this table
+
+- **VAL loss falling window after window** → the rotating variant is
+  learning as it descends; the bridge overlap is doing its job.
+- **VAL loss stalling or rising as windows go deeper** → the
+  re-freezing of upper layers bottlenecks deep-layer learning, as
+  predicted by theory. Still a valid finding.
+- The embedding layer is never trained during rotation (it sits below
+  layer 0 and does not fit alongside transformer layers in 2GB). Token
+  fragmentation (e.g. "Par l amento" instead of "Parlamento") is
+  expected to persist until the full-unfreeze stage.
+
+### Notes per window
+
+_(record observations here as each window completes — inference
+samples, anomalies, crashes, throughput)_
+
+- **Window A (21,20,19):** in progress. First eval VAL 6.4454 at step
+  50,500. Throughput ~50 steps/min on 2GB GPU. VRAM ~1.7GB.
+  ### Hypothesis (to be tested)
+
+We hypothesize that warming the transformer layers via rotating
+unfreezing reduces the steps required for the full-unfreeze stage
+to reach a given VAL loss, compared to full unfreeze from random
+initialization.
+
+The magnitude of this saving (if any) can only be measured by
+running both conditions:
+  (1) full unfreeze from scratch  [control]
+  (2) full unfreeze after rotating warm-up  [experiment]
+
+Until both are measured, no percentage is claimed.
