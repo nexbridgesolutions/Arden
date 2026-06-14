@@ -99,7 +99,21 @@ the first 256 tokens of each chunk (~8x more effective data).
 
 ### Results
 
-_(to be updated)_
+Cargando modelo...
+
+--- PRUEBA ARDEN 0.2 ---
+
+Prompt : The history of the world is
+Arden  : The history of the world is In addition to being subject to our Priv acy Policy , storage , and use of your data will be notified from the laws and regulations country .
+
+Prompt : La historia del mundo es
+Arden  : La histor ia del mun do es El president e de la Com isi ón , el Con se jo que expulsion ó lo h acer al gun as o .
+
+Prompt : L'histoire du monde est
+Arden  : L ' his to ire du mon de est Le chef d ’ ê tre dé but de la ré g ion des dro its de l ’ hom me à ce ux qu i ont é t és par le ur é pr és ident ifier en France .
+
+Prompt : A história do mundo é
+Arden  : A hist ó ria do mun do é La 3 de la citywide del con se j em plo , el que las cu ent a ñ os y los tr ab aj ado res es .
 
 ## Experimental methodology — rotating gradual unfreezing
 
