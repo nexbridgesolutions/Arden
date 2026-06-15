@@ -147,7 +147,7 @@ class ArdenTrainer:
         for name, param in model.named_parameters():
             param.requires_grad = False
         for name, param in model.named_parameters():
-            if any(x in name for x in ["layers.19.", "layers.20.", "layers.21.", "norm_final", "lm_head"]):
+            if any(x in name for x in ["layers.17.", "layers.18.", "layers.19.", "norm_final", "lm_head"]):
                 param.requires_grad = True
 
         trainable = sum(p.numel() for p in model.parameters() if p.requires_grad)
@@ -202,7 +202,7 @@ class ArdenTrainer:
 
         # Mantener solo los últimos N checkpoints
         checkpoints = sorted(self.checkpoint_dir.glob("step_*.pt"))
-        while len(checkpoints) > self.cfg_ck.keep_last_n_checkpoints:
+        while len(checkpoints) > self.cfg_t.keep_last_n_checkpoints:
             checkpoints[0].unlink()
             checkpoints = checkpoints[1:]
 
@@ -256,12 +256,24 @@ class ArdenTrainer:
         # Resume automático desde el checkpoint
         best_path   = self.checkpoint_dir / "best_model.pt"
         checkpoints = sorted(self.checkpoint_dir.glob("step_*.pt"))
+
+        # Reúne candidatos con su step real, elige el MÁS AVANZADO
+        candidates = []
+        if checkpoints:
+            last_ckpt = checkpoints[-1]
+            try:
+                step_ckpt = torch.load(last_ckpt, map_location="cpu", weights_only=True)["step"]
+                candidates.append((step_ckpt, last_ckpt))
+            except Exception:
+                pass
         if best_path.exists():
-            resume_path = best_path
-        elif checkpoints:
-            resume_path = checkpoints[-1]
-        else:
-            resume_path = None
+            try:
+                step_best = torch.load(best_path, map_location="cpu", weights_only=True)["step"]
+                candidates.append((step_best, best_path))
+            except Exception:
+                pass
+
+        resume_path = max(candidates, key=lambda c: c[0])[1] if candidates else None
 
         if resume_path is not None:
             print(f"\n  Resuming from {resume_path.name}...")

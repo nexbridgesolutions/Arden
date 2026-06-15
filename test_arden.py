@@ -46,9 +46,10 @@ def generate(prompt, max_new_tokens=50, temperature=0.8):
 
 print("\n--- PRUEBA ARDEN 0.2 ---\n")
 prompts = [
-    "The European Parliament",
-    "El Parlamento Europeo",
-    "Le Parlement européen",
+    "The history of the world is",     # EN (77% del corpus)
+    "La historia del mundo es",        # ES (5% — el más débil)
+    "L'histoire du monde est",         # FR (18%)
+    "A história do mundo é",           # PT (Wikipedia)
 ]
 
 for p in prompts:

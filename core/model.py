@@ -3,7 +3,7 @@ ARDEN 1.0 — General Purpose Bilingual LLM ES/EN
 Copyright 2026 Nex Bridge Solutions LLC — David Ernesto Arriaga Pineda
 SPDX-License-Identifier: Arden Community License v1.0
 
-Decoder-only Transformer ~110M parameters.
+Decoder-only Transformer ~0.2B parameters.
 CPU-only (torch.float32). No external dependencies beyond PyTorch.
 """
 
