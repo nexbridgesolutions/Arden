@@ -19,6 +19,7 @@ import torch.nn.functional as F
 import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from torch.utils.checkpoint import checkpoint
 
 from core.attention import MultiHeadAttention
 from core.config import ModelConfig
@@ -146,7 +147,13 @@ class ArdenModel(nn.Module):
             key_padding_mask = attention_mask.eq(0)
 
         for layer in self.layers:
-            x = layer(x, attn_mask=attn_mask, key_padding_mask=key_padding_mask)
+            if self.training:
+                x = checkpoint(
+                    layer, x, attn_mask, key_padding_mask,
+                    use_reentrant=False,
+                )
+            else:
+                x = layer(x, attn_mask=attn_mask, key_padding_mask=key_padding_mask)
 
         hidden    = self.norm_final(x)
         lm_logits = self.lm_head(hidden)
