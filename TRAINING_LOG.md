@@ -258,4 +258,93 @@ embedding that causes token fragmentation.
 Checkpoint preserved as: `arden_0.2b_windowB_150k.pt`
 
 ---
+## Gradient checkpointing + smoke test — rotation made viable on 2GB
+
+### The 2GB wall (before checkpointing)
+
+The rotation experiment stalled at Window C: training layers in
+deeper positions (15,16,17) caused CUDA OOM on the 2GB GPU, even with
+`expandable_segments:True` already active. With only ~17 MiB free, the
+backward pass could not allocate. Reducing to 2 layers moved the OOM
+to the forward pass (cross_entropy over 32k vocab). The wall was the
+fixed cost of gradients + optimizer state + activations, not
+fragmentation.
+
+### Fix: gradient checkpointing
+
+Wrapped each transformer layer with `torch.utils.checkpoint` during
+training (forward only; eval runs normally):
+
+```python
+for layer in self.layers:
+    if self.training:
+        x = checkpoint(layer, x, attn_mask, key_padding_mask,
+                       use_reentrant=False)
+    else:
+        x = layer(x, attn_mask=attn_mask, key_padding_mask=key_padding_mask)
+```
+
+This trades compute for memory: activations are recomputed in the
+backward pass instead of stored, freeing VRAM.
+
+### Finding on checkpointing
+
+| Config | Without checkpointing | With checkpointing |
+|---|---|---|
+| 3 layers, deep (15,16,17) | OOM | **fits, 1.7GB** |
+| 4 layers | OOM | OOM (still) |
+| Throughput | ~63s / 50 steps | ~84-130s / 50 steps |
+
+- Checkpointing **unblocks 3 layers in ANY position**, including deep
+  ones that previously OOM'd.
+- It does **not raise the max layer count** (still 3) — the 4-layer
+  wall comes from gradient + optimizer cost, which checkpointing does
+  not reduce.
+- Cost: roughly 30-50% slower per step.
+
+### Smoke test: full-rotation viability
+
+Ran a rapid smoke test (~100-200 steps per window) descending the
+entire model, window by window, from layer 17 down to layer 0:
+
+| Window | Layers | Fits on 2GB? |
+|---|---|---|
+| C | 15,16,17 | ✅ |
+| D | 13,14,15 | ✅ |
+| E | 11,12,13 | ✅ |
+| F | 9,10,11 | ✅ |
+| G | 7,8,9 | ✅ |
+| H | 5,6,7 | ✅ |
+| I | 3,4,5 | ✅ |
+| J | 1,2,3 | ✅ |
+| K | 0,1 | ✅ |
+
+**Result: every window fits at a constant ~1.7GB VRAM. The full
+rotation experiment, all the way to layer 0, is viable on a 2GB GPU
+with gradient checkpointing.** No OOM at any depth.
+
+VAL numbers during the smoke test are NOT meaningful (only ~100-200
+steps per window, LR at floor) — the smoke test verified technical
+feasibility only, not quality.
+
+### Real experiment scope (decided)
+
+The rotation experiment will be run over **exactly one epoch** of the
+corpus (240,000 steps total at batch_eff=8). With Windows A and B
+already complete, the remaining ~88,500 steps to reach 1 full epoch
+are distributed across the 8 remaining windows (~11,000 steps each),
+descending from layer 15 to layer 0.
+
+**Methodological note:** Windows A and B ran 50k+ steps each, while
+Windows D–K run ~11k each (to fit the experiment within one epoch).
+Step counts per window are therefore NOT uniform. VAL differences
+between early and late windows may partly reflect step count, not only
+layer choice. This is a documented limitation of running the full
+experiment within a single-epoch budget on constrained hardware.
+
+The embedding (token_emb) remains frozen throughout the entire
+rotation — token fragmentation ("Par l amento") will persist until the
+full-unfreeze stage on the tower.
+
+---
 

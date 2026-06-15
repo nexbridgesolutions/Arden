@@ -76,7 +76,7 @@ class TrainingConfig:
     min_learning_rate         : float = 3e-5
     warmup_steps              : int   = 1_000
     lr_decay_type             : str   = "cosine"
-    max_steps                 : int   = 200_000
+    max_steps                 : int   = 151_500
     max_epochs                : Optional[int] = None
     optimizer_type            : str   = "adamw"
     weight_decay              : float = 0.01

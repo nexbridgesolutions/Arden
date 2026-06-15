@@ -147,7 +147,7 @@ class ArdenTrainer:
         for name, param in model.named_parameters():
             param.requires_grad = False
         for name, param in model.named_parameters():
-            if any(x in name for x in ["layers.15.","layers.16.", "layers.17.", "norm_final", "lm_head"]):
+            if any(x in name for x in ["layers.0.", "norm_final", "lm_head"]):
                 param.requires_grad = True
 
         trainable = sum(p.numel() for p in model.parameters() if p.requires_grad)
