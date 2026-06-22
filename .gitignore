@@ -34,3 +34,16 @@ arden_config.json
 
 # Corpus tokenizado — 23GB, nunca subir
 data/processed/
+
+# Corpus datasets — demasiado pesados para GitHub, se re-descargan
+data/corpus_6b/
+*.parquet
+
+# Checkpoints — nunca subir
+checkpoints/
+*.pt
+*.pth
+
+# GGUF exportados
+gguf/
+*.gguf
