@@ -46,10 +46,20 @@ def generate(prompt, max_new_tokens=50, temperature=0.8):
 
 print("\n--- PRUEBA ARDEN 0.2 ---\n")
 prompts = [
-    "The history of the world is",     # EN (77% del corpus)
-    "La historia del mundo es",        # ES (5% — el más débil)
-    "L'histoire du monde est",         # FR (18%)
-    "A história do mundo é",           # PT (Wikipedia)
+    "Once upon a time, in a small village,",      # EN
+    "Había una vez, en un pequeño pueblo,",        # ES
+    "Il était une fois, dans un petit village,",   # FR
+    "Era uma vez, numa pequena aldeia,",           # PT
+
+    "Yesterday I went to the market and",          # EN
+    "Ayer fui al mercado y",                       # ES
+    "Hier je suis allé au marché et",              # FR
+    "Ontem fui ao mercado e",                      # PT
+
+    "If it rains tomorrow, then we will",          # EN
+    "Si mañana llueve, entonces",                  # ES
+    "S'il pleut demain, alors nous",               # FR
+    "Se chover amanhã, então",                     # PT
 ]
 
 for p in prompts:

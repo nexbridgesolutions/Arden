@@ -76,7 +76,7 @@ class TrainingConfig:
     min_learning_rate         : float = 3e-5
     warmup_steps              : int   = 1_000
     lr_decay_type             : str   = "cosine"
-    max_steps                 : int   = 151_500
+    max_steps                 : int   = 240_000
     max_epochs                : Optional[int] = None
     optimizer_type            : str   = "adamw"
     weight_decay              : float = 0.01
@@ -194,7 +194,7 @@ class ArdenConfig:
     description: str = "General Purpose 0.2B-parameters"
     copyright  : str = "Copyright 2026 Nex Bridge Solutions LLC"
     license    : str = "Arden Community License v1.0"
-    author     : str = "David Arriaga"
+    author     : str = "David Ernesto Arriaga Pineda"
     contact    : str = "legal@nexbridgesolutions.com"
 
     model     : ModelConfig      = field(default_factory=ModelConfig)

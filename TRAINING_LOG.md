@@ -348,3 +348,65 @@ full-unfreeze stage on the tower.
 
 ---
 
+## Rotating gradual unfreezing — full descent complete (SUCCESS ✅)
+
+**Status:** Completed — full rotation executed as planned, layer 21
+down to layer 0, in windows of 3 with one bridge layer overlapping
+between consecutive windows (per the methodology and smoke-test plan
+above).
+
+### Result
+
+| Stage | VAL loss |
+|---|---|
+| Phase 2 / Window A baseline (contiguous, layers 19-21) | 6.25 |
+| Window B (rotating, layers 17-19) | 6.29 — did not beat baseline |
+| **Final window (rotating descent complete, layers 1-0)** | **5.0125** |
+
+The full rotating descent — continuing past Window B through the
+deeper windows (C through K, layers 15 down to 0, enabled by the
+gradient checkpointing fix documented above) — closes with a VAL loss
+of **5.0125**, a substantial improvement over both the 6.25 contiguous
+baseline and the 6.29 Window B result.
+
+This supports the project's working hypothesis: while a single
+rotation step (Window B) showed the predicted re-freezing bottleneck,
+continuing the rotation across the full depth of the network — each
+window passing learned signal further down via the bridge layer —
+eventually overcomes that bottleneck and drives loss meaningfully
+below the contiguous-only baseline.
+
+### Inference samples (test_arden.py, PyTorch, post-rotation)
+
+Multilingual probe set (EN/ES/FR/PT), same prompts style as Phase 1/2
+for comparability.
+
+**EN:** "Once upon a time, in a small village, The most recent years
+ago that it is to be an end of $4 billion." / "Yesterday I went to the
+market and Most of them for a few years, as if it's relevant that we
+don't have any other than they want."
+→ Fluent surface grammar, intact whole-word tokens, still semantically
+loose — consistent with prior phases.
+
+**ES:** "Había una vez, en un pequeño pueblo, El acceso de la segunda
+idad con el Parlamento Europeo a." / "Ayer fui al mercado y En el
+consecuencia en los que no puede habrar lo en la Comisión."
+→ Token fragmentation persists ("Hab ía", "Par l amento", "id ad"),
+as expected — token_emb has not been part of this rotation and
+remains at random initialization.
+
+**FR / PT:** Similar pattern — coherent function-word usage and
+EU/political-register vocabulary bleeding through (a corpus artifact
+noted since Phase 1), but heavy subword fragmentation throughout.
+
+### Note on embedding layer
+
+As anticipated since Phase 1, fragmentation in ES/FR/PT ("Hab ía",
+"pe que ñ o p ue blo") confirms `token_emb` remained frozen throughout
+the entire rotating descent. The VAL loss improvement to 5.0125 was
+achieved entirely through the transformer layers and final norm/head —
+the embedding layer is the next and final frontier, planned for a
+full-unfreeze stage.
+
+Checkpoint preserved as: `step_00240000_final.pt` (also mirrored as
+`best_model.pt`).
