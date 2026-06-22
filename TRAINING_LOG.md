@@ -448,3 +448,44 @@ Arden  : S ' il ple ut de main , al ors n ous Le produ it que vous sou ha ite z 
 
 Prompt : Se chover amanhã, então
 Arden  : Se ch over aman h ã , ent ão En la m ê me é dia ée de l ' E tat am iti confidentiality et d ans le cad re du sect eur g én é ral des Beckham es ou v r és idents sur les dé c isions es de ux parties .
+
+### Strategic motivation — low-resource swarm training
+ 
+**Why this experiment matters beyond Arden itself:**
+ 
+The rotating gradual unfreezing result above answers a narrower
+question than "does rotation beat a contiguous baseline" — it answers
+a question about **minimum viable hardware for training a genuinely
+useful model end-to-end**: can all 22 layers of a transformer be
+trained, one small rotating window at a time, within a constant
+~1.7GB VRAM budget, and still produce real improvement (VAL loss 6.44
+→ 5.0125)? The result says yes.
+ 
+This is the piece of evidence needed to justify a larger proposed
+architecture: **low-resource swarm training**, where complementary
+training is distributed across multiple independent, complete small
+models rather than across multiple machines training one large model.
+ 
+**The proposed model:**
+ 
+- Each "node" in the swarm trains one **complete, independent small
+  model** (not a shard or a single layer of a shared model) — using
+  the same minimal-VRAM rotating-unfreeze technique validated here.
+- A single low-power processor (e.g. an Intel N100, no discrete GPU)
+  could plausibly host **on the order of 10 such training runs**
+  concurrently, since each individual run only requires the ~1.7GB
+  envelope demonstrated above (rather than the full memory a
+  traditional single large training run would require).
+- The resulting independently-trained models are then combined as a
+  **complementary ensemble** (combining weights and/or outputs) rather
+  than as shards of one larger network.
+**Status of this idea:** strategic motivation / proposed next research
+direction. The swarm/ensemble combination step itself has **not** been
+run or measured — only the single-model rotating-unfreeze technique
+that would make each individual swarm node feasible on minimal
+hardware has been validated, in this log, on Arden 0.2B. The swarm
+training thesis, and whether 10 concurrent small models genuinely
+outperform one larger model trained conventionally with the same
+aggregate hardware, remains to be tested.
+ 
+— David Ernesto Arriaga Pineda, Nex Bridge Solutions LLC, 2026
