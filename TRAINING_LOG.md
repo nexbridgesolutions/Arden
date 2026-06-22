@@ -410,3 +410,41 @@ full-unfreeze stage.
 
 Checkpoint preserved as: `step_00240000_final.pt` (also mirrored as
 `best_model.pt`).
+
+--- PRUEBA ARDEN 0.2 ---
+
+Prompt : Once upon a time, in a small village,
+Arden  : Once upon a time , in a small village , The most recent years ago that it is to be an end of $ 4 billion .
+
+Prompt : Había una vez, en un pequeño pueblo,
+Arden  : Hab ía una vez , en un pe que ñ o p ue blo , El ac ces o de la se g unda id ad con el Par l amento Europe o a .
+
+Prompt : Il était une fois, dans un petit village,
+Arden  : Il é ta it une fo is , d ans un pet it village , C ette ré union n ous p ou v ons à la s ant é rie de l ' E sp agne sur ce tte question .
+
+Prompt : Era uma vez, numa pequena aldeia,
+Arden  : E ra uma vez , num a pe qu ena al de ia , A dem á s los usu ar ios po dr án val or ar los com ent ar ios de ot ros le cto res vot and o a favor o en contr a , y en cas o de que cons ide ren un com ent ario in
+
+Prompt : Yesterday I went to the market and
+Arden  : Yesterday I went to the market and Most of them for a few years , as if it ’ s rele that we don ' t have any other than they want .
+
+Prompt : Ayer fui al mercado y
+Arden  : A yer fu i al mer c ado y En el con se cu enc ia en los que no p ued e hab r ar lo en la Com isi ón .
+
+Prompt : Hier je suis allé au marché et
+Arden  : H ier je su is all é au march é et D ans son pro jet de lo i , le ur pays du mon dial ent re les dé part isans ment .
+
+Prompt : Ontem fui ao mercado e
+Arden  : On tem fu i ao mer c ado e Per o de la Un i ón Europe a , en un que no p ued an las aut or id ades est as al ac ion es y el debate res pe to del Con se jo ven ir án dose ñ or io .
+
+Prompt : If it rains tomorrow, then we will
+Arden  : If it rains tomorrow , then we will The company ’ s decision to make the country is a largest economy of their own on a new features .
+
+Prompt : Si mañana llueve, entonces
+Arden  : Si ma ñ ana ll ue ve , ent on ces El G ob ier no se h ace un plan te ma del remind o de los Est ados mi emb ros y la Un i ón Europe a en el delegate , per o que le va a plic ar ía en al gun as í cul os
+
+Prompt : S'il pleut demain, alors nous
+Arden  : S ' il ple ut de main , al ors n ous Le produ it que vous sou ha ite z consul ter est pay ant ou ré serv é à nos ab on n és . ou vell es se produ is ent .. _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+Prompt : Se chover amanhã, então
+Arden  : Se ch over aman h ã , ent ão En la m ê me é dia ée de l ' E tat am iti confidentiality et d ans le cad re du sect eur g én é ral des Beckham es ou v r és idents sur les dé c isions es de ux parties .
